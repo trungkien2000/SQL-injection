@@ -2,7 +2,7 @@
 
 Thực hiện: Trung Kiên
 
-Ngày thực hiện: 4/4/2022
+Ngày thực hiện: 4/4/2022, 7/4/2022
 
 Mục lục:
 
@@ -95,3 +95,21 @@ SELECT * FROM Users WHERE Username = 'abc' AND Password = '' OR '' = ''  
   -  Backup dữ liệu thường xuyên: Dữ liệu phải thường xuyên được backup để nếu có bị hacker xoá thì ta vẫn có thể khôi phục được.
 
 ## 4. Nhúng SQL vào PHP <a name="id4" />
+
+- Để kết nối vào database, cần biết một số thông số của SQL: hostname (tên của host SQL server), username (tên đăng nhập để kết nối vào host), password (mật khẩu để đăng nhập vào host), databasename (tên database muốn kết nối)
+- Có thể sử dụng thư viện có sẵn trong PHP để kết nối SQL vào PHP. Các thư viện thường được dùng là PDO (PHP Data Objects) và MySQLi (MySQL improved)
+  - Cách kết nối dùng PDO:
+  ```PHP
+  $pdo = new PDO("mysql:host=localhost;dbname=database", 'username', 'password');
+  ```
+  - Cách kết nối dùng MySQLi:
+  ```PHP
+  // hướng thủ tục
+  $mysqli = mysqli_connect('localhost','username','password','database');
+
+  // hướng đối tượng
+  $mysqli = new mysqli('localhost','username','password','database');
+  ```
+- So sánh PDO và MySQLi
+  - PDO: kết nối được với 12 loại SQL server khác nhau; chỉ có hướng đối tượng; dễ dàng chuyển đổi từ loại database này sang loại database khác
+  - MySQLi: chỉ kết nối được với MySQL server; có hướng đối tượng và hỗ trợ thêm các hàm thủ tục

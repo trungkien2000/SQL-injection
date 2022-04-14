@@ -32,3 +32,5 @@ sqlmap -u "http://192.168.67.133/cat.php?id=1" --headers="X-forwarded-for:1*" --
 ![image](https://user-images.githubusercontent.com/61901474/163430093-0c7ad3ee-c878-42da-81a1-e87ea48e72cd.png)
 
 ![image](https://user-images.githubusercontent.com/61901474/163430101-0863ffdf-2080-46f0-872a-b8ee64b51b1a.png)
+
+- Blind SQL injection: Blind SQL injection là một kiểu tấn công SQL injection truy vấn cơ sở dữ liệu sử dụng các mệnh đề để đoán biết. Cách tấn công này thường được sử dụng khi mà một ứng dụng (web, apps) được cấu hình để chỉ hiển thị những thông báo lỗi chung chung, không hiển thị ra lỗi của SQL. Có hai biến thể chính để thực hiện Blind SQL injection: * Blind SQL injejction dựa vào nội dung phản hồi. * Blind SQL injejction dựa vào độ trễ của thời gian phản hồi.

